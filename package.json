@@ -1,6 +1,6 @@
 {
-  "name": "@deep-foundation/chatgpt-discord-listener",
-  "version": "0.0.8",
+  "name": "@deep-foundation/chatgpt-azure-discord-listener",
+  "version": "0.1.0",
   "scripts": {
     "dev": "nodemon index.ts",
     "package:build": "tsc --project tsconfig.json",
