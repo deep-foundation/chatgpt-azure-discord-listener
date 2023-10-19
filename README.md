@@ -1,4 +1,4 @@
-# chatgpt-discord-listener
+# chatgpt-azure-discord-listener
 
 - `/healthz` - GET - 200 - Health check endpoint
   - Response:
@@ -14,6 +14,8 @@
         - code: STRING - Code of handler
         - data: {} - Data for handler execution from deeplinks
           > If this is type handler
+          >
+
           - oldLink - from deeplinks, link before transaction
           - newLink - from deeplinks, link after transaction
           - promiseId - from deeplinks, promise id

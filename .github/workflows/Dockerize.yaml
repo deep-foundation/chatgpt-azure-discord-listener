@@ -31,7 +31,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: deepf/chatgpt-discord-listener
+          images: deepf/chatgpt-azure-discord-listener
       - name: build docker image and push
         id: docker_build
         uses: docker/build-push-action@v2

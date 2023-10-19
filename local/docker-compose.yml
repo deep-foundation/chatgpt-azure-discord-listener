@@ -1,7 +1,7 @@
 version: '3.6'
 services:
-  chatgpt-discord-listener:
-    image: deepf/chatgpt-discord-listener:main
+  chatgpt-azure-discord-listener:
+    image: deepf/chatgpt-azure-discord-listener:main
     networks:
       - deep
     ports:
