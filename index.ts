@@ -63,19 +63,22 @@ const startBot = async (deep) => {
     });
 
     process.on('unhandledRejection', async (event) => {
-      console.error('Unhandled promise rejection:', JSON.stringify(event, null, 2));
+      const eventString = JSON.stringify(event, null, 2);
+      console.error('Unhandled promise rejection:', );
       await discordClient.destroy();
-      throw new Error({ unhandledRejection: event });
+      throw new Error(`Error: ${eventString}`);
     });
 
     discordClient.on('exit', (event) => {
+      const eventString = JSON.stringify(event, null, 2);
       console.log(`Discord bot is exited`, event);
-      throw new Error({ exited: event });
+      throw new Error(`Error: ${eventString}`);
     });
 
     discordClient.on('disconnected', (event) => {
+      const eventString = JSON.stringify(event, null, 2);
       console.log(`Discord bot is disconnected.`, event);
-      throw new Error({ disconnected: event });
+      throw new Error(`Error: ${eventString}`);
     });
 
     discordClient.on(Discord.Events.MessageCreate, async (message) => {
