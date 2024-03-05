@@ -45,6 +45,7 @@ const startBot = async (deep) => {
   };
 
   const Discord = require("discord.js");
+  const {ChannelType} = await deep.import("discord.js");
   const BOT_TOKEN = await loadBotToken();
 
   const discordClient = new Discord.Client({
@@ -61,6 +62,12 @@ const startBot = async (deep) => {
       console.log(`Logged in as ${discordClient.user.tag}!`);
     });
 
+    process.on('unhandledRejection', async (error) => {
+      console.error('Unhandled promise rejection:', JSON.stringify(error, null, 2));
+      await discordClient.destroy();
+      throw new error({ unhandledRejection: error });
+    });
+
     discordClient.on('exit', (event) => {
       console.log(`Discord bot is exited`, event);
       throw new error({ exited: event });
@@ -73,18 +80,32 @@ const startBot = async (deep) => {
 
     discordClient.on(Discord.Events.MessageCreate, async (message) => {
       const mentionPrefix = `<@${discordClient.user.id}>`;
-      if (message.content.includes(mentionPrefix) && !message.author.bot) {
+      console.log({mentionPrefix})
+      const channelManager = discordClient.channels;
+      const channel = await channelManager.fetch(message.channelId)
+      console.log({channel})
+      const allowedChannelTypes = [ChannelType.PublicThread,ChannelType.PrivateThread]
+      console.log({allowedChannelTypes})
+      const isAllowedChannelType = allowedChannelTypes.includes(channel.type)
+      console.log({isAllowedChannelType})
+      if (message.content.includes(mentionPrefix) && !message.author.bot && isAllowedChannelType) {
         const channelName = "" + message.channel.id;
+        console.log({channelName})
         let messageContent;
 
         if (message.reference) {
-          console.log("replyToMessageId:" + message.reference.messageID);
+          const replyToMessageId = message.reference.messageID;
+          console.log({replyToMessageId});
           const replyToMessage = await message.fetchReference();
-          console.log("reply text:" + replyToMessage.content);
+          const replyText = replyToMessage.content;
+          console.log({replyText});
           messageContent = `${replyToMessage.content}
           ---
           ${message.content}`;
-        } else messageContent = message.content;
+        } else {
+          messageContent = message.content
+          console.log({messageContent})
+        };
 
         const messageLink = {
           string: { data: { value: messageContent } },
@@ -96,6 +117,7 @@ const startBot = async (deep) => {
             }]
           }
         };
+        console.log({messageLink})
 
         const { data: [{ id: messageLinkId }] } = await deep.insert(messageLink);
 
