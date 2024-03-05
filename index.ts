@@ -62,20 +62,20 @@ const startBot = async (deep) => {
       console.log(`Logged in as ${discordClient.user.tag}!`);
     });
 
-    process.on('unhandledRejection', async (error) => {
-      console.error('Unhandled promise rejection:', JSON.stringify(error, null, 2));
+    process.on('unhandledRejection', async (event) => {
+      console.error('Unhandled promise rejection:', JSON.stringify(event, null, 2));
       await discordClient.destroy();
-      throw new error({ unhandledRejection: error });
+      throw new Error({ unhandledRejection: event });
     });
 
     discordClient.on('exit', (event) => {
       console.log(`Discord bot is exited`, event);
-      throw new error({ exited: event });
+      throw new Error({ exited: event });
     });
 
     discordClient.on('disconnected', (event) => {
       console.log(`Discord bot is disconnected.`, event);
-      throw new error({ disconnected: event });
+      throw new Error({ disconnected: event });
     });
 
     discordClient.on(Discord.Events.MessageCreate, async (message) => {
