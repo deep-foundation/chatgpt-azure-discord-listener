@@ -186,6 +186,7 @@ app.get('/healthz', (req, res) => {
 });
 
 app.post('/init', (req, res) => {
+  const { deepToken, botToken } = req.body;
   const deep = makeDeepClient(deepToken, botToken);
   startBot(deep, botToken);
   res.send(req.body);
