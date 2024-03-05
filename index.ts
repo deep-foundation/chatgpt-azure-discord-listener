@@ -22,7 +22,7 @@ const makeDeepClient = (token: string) => {
   return deepClient;
 }
 
-const startBot = async (deep) => {
+const startBot = async (deep, botToken) => {
   const conversationTypeLinkId = await deep.id("@deep-foundation/chatgpt-azure", "Conversation");
   const messageTypeLinkId = await deep.id("@deep-foundation/messaging", "Message");
   const authorTypeLinkId = await deep.id("@deep-foundation/messaging", "Author");
@@ -31,22 +31,8 @@ const startBot = async (deep) => {
   const messagingTreeId = await deep.id("@deep-foundation/messaging", 'messagingTree');
   const userLinkId = deep.linkId;
 
-  const loadBotToken = async () => {
-    const containTreeId = await deep.id('@deep-foundation/core', 'containTree');
-    const tokenTypeId = await deep.id('@deep-foundation/chatgpt-azure-discord-bot', 'BotToken');
-    const { data: [{ value: { value: npmToken = undefined } = {} } = {}] = [] } = await deep.select({
-      up: {
-        tree_id: { _eq: containTreeId },
-        parent_id: { _eq: userLinkId },
-        link: { type_id: { _eq: tokenTypeId } }
-      }
-    });
-    return npmToken;
-  };
-
   const Discord = require("discord.js");
   const {ChannelType} = await deep.import("discord.js");
-  const BOT_TOKEN = await loadBotToken();
 
   const discordClient = new Discord.Client({
     intents: [
@@ -188,7 +174,7 @@ const startBot = async (deep) => {
         }
       }
     });
-    discordClient.login(BOT_TOKEN);
+    discordClient.login(botToken);
   });
   return await botListenPromise;
 }
@@ -200,9 +186,8 @@ app.get('/healthz', (req, res) => {
 });
 
 app.post('/init', (req, res) => {
-  const { token } = req.body;
-  const deep = makeDeepClient(token);
-  startBot(deep);
+  const deep = makeDeepClient(deepToken, botToken);
+  startBot(deep, botToken);
   res.send(req.body);
 });
 
