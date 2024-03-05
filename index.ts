@@ -32,7 +32,7 @@ const startBot = async (deep, botToken) => {
   const userLinkId = deep.linkId;
 
   const Discord = require("discord.js");
-  const {ChannelType} = await deep.import("discord.js");
+  const {ChannelType} = Discord;
 
   const discordClient = new Discord.Client({
     intents: [
