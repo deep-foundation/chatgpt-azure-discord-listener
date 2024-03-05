@@ -112,13 +112,7 @@ const startBot = async (deep) => {
 
         const messageLink = {
           string: { data: { value: messageContent } },
-          type_id: messageTypeLinkId,
-          in: {
-            data: [{
-              type_id: containTypeLinkId,
-              from_id: userLinkId,
-            }]
-          }
+          type_id: messageTypeLinkId
         };
         console.log({messageLink})
 
@@ -175,12 +169,6 @@ const startBot = async (deep) => {
             type_id: replyTypeLinkId,
             from_id: messageLinkId,
             to_id: lastMessageId,
-            in: {
-              data: [{
-                type_id: containTypeLinkId,
-                from_id: userLinkId,
-              }]
-            }
           });
         } else {
           await deep.insert({
@@ -194,12 +182,6 @@ const startBot = async (deep) => {
               {
                 type_id: replyTypeLinkId,
                 from_id: messageLinkId,
-                in: {
-                  data: [{
-                    type_id: containTypeLinkId,
-                    from_id: userLinkId,
-                  }]
-                }
               }]
             }
           });
