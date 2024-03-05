@@ -29,7 +29,7 @@ const startBot = async (deep) => {
   const containTypeLinkId = await deep.id("@deep-foundation/core", "Contain");
   const replyTypeLinkId = await deep.id("@deep-foundation/chatgpt-azure", 'Reply');
   const messagingTreeId = await deep.id("@deep-foundation/messaging", 'messagingTree');
-  const userLinkId = await deep.id("deep", "admin");
+  const userLinkId = deep.linkId;
 
   const loadBotToken = async () => {
     const containTreeId = await deep.id('@deep-foundation/core', 'containTree');
