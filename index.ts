@@ -37,7 +37,7 @@ const startBot = async (deep) => {
     const { data: [{ value: { value: npmToken = undefined } = {} } = {}] = [] } = await deep.select({
       up: {
         tree_id: { _eq: containTreeId },
-        parent_id: { _eq: deep.linkId },
+        parent_id: { _eq: userLinkId },
         link: { type_id: { _eq: tokenTypeId } }
       }
     });
