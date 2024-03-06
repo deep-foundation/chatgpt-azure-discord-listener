@@ -51,13 +51,6 @@ const startBot = async (deep, botToken) => {
       console.log(`Logged in as ${discordClient.user.tag}!`);
     });
 
-    process.on('unhandledRejection', async (event) => {
-      const eventString = JSON.stringify(event, null, 2);
-      console.error('Unhandled rejection:', eventString);
-      await discordClient.destroy();
-      // throw new Error(`Unhandled rejection error: ${eventString}`);
-    });
-
     discordClient.on('exit', (event) => {
       const eventString = JSON.stringify(event, null, 2);
       console.log(`Discord bot is exited:`, event);
