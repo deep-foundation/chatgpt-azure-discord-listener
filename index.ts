@@ -22,6 +22,9 @@ const makeDeepClient = (token: string) => {
   return deepClient;
 }
 
+let discordClient;
+let botPromise;
+
 const startBot = async (deep, botToken) => {
   const conversationTypeLinkId = await deep.id("@deep-foundation/chatgpt-azure", "Conversation");
   const messageTypeLinkId = await deep.id("@deep-foundation/messaging", "Message");
@@ -34,7 +37,7 @@ const startBot = async (deep, botToken) => {
   const Discord = require("discord.js");
   const {ChannelType} = Discord;
 
-  const discordClient = new Discord.Client({
+  discordClient = new Discord.Client({
     intents: [
       Discord.GatewayIntentBits.DirectMessages,
       Discord.GatewayIntentBits.Guilds,
@@ -50,21 +53,21 @@ const startBot = async (deep, botToken) => {
 
     process.on('unhandledRejection', async (event) => {
       const eventString = JSON.stringify(event, null, 2);
-      console.error('Unhandled promise rejection:', );
+      console.error('Unhandled rejection:', eventString);
       await discordClient.destroy();
-      throw new Error(`Error: ${eventString}`);
+      throw new Error(`Unhandled rejection error: ${eventString}`);
     });
 
     discordClient.on('exit', (event) => {
       const eventString = JSON.stringify(event, null, 2);
-      console.log(`Discord bot is exited`, event);
-      throw new Error(`Error: ${eventString}`);
+      console.log(`Discord bot is exited:`, event);
+      resolve({ existedSuccessfully: true, exitEvent: event });
     });
 
     discordClient.on('disconnected', (event) => {
       const eventString = JSON.stringify(event, null, 2);
-      console.log(`Discord bot is disconnected.`, event);
-      throw new Error(`Error: ${eventString}`);
+      console.log(`Discord bot is disconnected:`, event);
+      throw new Error(`Discord bot is disconnection error: ${eventString}`);
     });
 
     discordClient.on(Discord.Events.MessageCreate, async (message) => {
@@ -174,6 +177,7 @@ const startBot = async (deep, botToken) => {
         }
       }
     });
+
     discordClient.login(botToken);
   });
   return await botListenPromise;
@@ -185,10 +189,16 @@ app.get('/healthz', (req, res) => {
   res.json({});
 });
 
-app.post('/init', (req, res) => {
+app.post('/init', async (req, res) => {
+  if (discordClient) {
+    discordClient.destroy();
+    if (botPromise) {
+      await botPromise;
+    }
+  }
   const { deepToken, botToken } = req.body;
   const deep = makeDeepClient(deepToken);
-  startBot(deep, botToken);
+  botPromise = startBot(deep, botToken);
   res.send(req.body);
 });
 
