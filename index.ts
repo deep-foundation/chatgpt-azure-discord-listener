@@ -55,7 +55,7 @@ const startBot = async (deep, botToken) => {
       const eventString = JSON.stringify(event, null, 2);
       console.error('Unhandled rejection:', eventString);
       await discordClient.destroy();
-      throw new Error(`Unhandled rejection error: ${eventString}`);
+      // throw new Error(`Unhandled rejection error: ${eventString}`);
     });
 
     discordClient.on('exit', (event) => {
